@@ -51,7 +51,6 @@ module.exports = {
     'no-multiple-empty-lines': ['error', {max: 1}],
     // '@typescript-eslint/no-var-requires': 'off'
 
-
     // import orders
     'import/order': ['error', {
       groups: [
@@ -60,7 +59,7 @@ module.exports = {
       'newlines-between': 'always',
       pathGroupsExcludedImportTypes: ['builtin'],
       pathGroups: [
-        '@Libs/**',
+        '@Lib/**',
       ].map(pattern => ({
         pattern,
         group: 'unknown',

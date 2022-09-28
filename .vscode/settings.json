@@ -8,6 +8,9 @@
   },
   "typescript.tsdk": "node_modules/typescript/lib",
   "cSpell.words": [
-    "alohomora"
+    "alohomora",
+    "jwks",
+    "nodeify",
+    "unstore"
   ]
 }

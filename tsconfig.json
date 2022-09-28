@@ -6,6 +6,7 @@
     "moduleResolution": "node",
     "pretty": true,
     "types": ["node", "mocha"],
+    "declaration": true,
     "sourceMap": true,
     "target": "es2018",
     "resolveJsonModule": true,
@@ -16,7 +17,7 @@
     "baseUrl": "./src",
     "outDir": "dist",
     "paths": {
-      "@Lib/*": ["lib/*"],
+      "@Lib/*": ["lib/*"]
     }
   },
   "include": ["./src"],
