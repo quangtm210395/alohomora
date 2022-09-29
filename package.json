@@ -1,6 +1,6 @@
 {
   "name": "alohomora",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "The middleware for nodejs to access keycloak authz service",
   "main": "dist/index",
   "author": "quangtm210395",
