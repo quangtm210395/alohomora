@@ -8,6 +8,7 @@ import { EnforcerOptions } from '@Lib/EnforcerOptions';
 import { Alohomora } from '@Lib/Alohomora';
 import { ResponsePermission } from '@Lib/ResponsePermission';
 import { Permission } from '@Lib/Permission';
+import { ILogger } from '@Lib/logger/ILoggerFactory';
 
 function handlePermissions (permissions: string[], callback: Function) {
   for (let i = 0; i < permissions.length; i++) {
@@ -32,6 +33,7 @@ function handlePermissions (permissions: string[], callback: Function) {
 export class Enforcer {
   keycloak: Alohomora;
   config: EnforcerOptions;
+  logger: ILogger;
   constructor(alohomora: Alohomora, config?: EnforcerOptions) {
     this.keycloak = alohomora;
     this.config = config || {};
@@ -42,6 +44,12 @@ export class Enforcer {
 
     if (!this.config.resource_server_id) {
       this.config.resource_server_id = this.keycloak.getConfig().clientId;
+    }
+
+    if (this.keycloak.LoggerFactory) {
+      this.logger = this.keycloak.LoggerFactory.create(module);
+    } else {
+      this.logger = console;
     }
   }
 
@@ -56,7 +64,7 @@ export class Enforcer {
       expectedPermissions = [].concat(requestPermissions || []);
     }
 
-    return function (request: AlohomoraRequest, response: Response, next: NextFunction) {
+    return (request: AlohomoraRequest, response: Response, next: NextFunction) => {
       if (!expectedPermissions || expectedPermissions.length === 0) {
         expectedPermissions = [];
         if (keycloak.getConfig().jsonEnforcerEnabled) {
@@ -81,7 +89,7 @@ export class Enforcer {
         response_mode: config.response_mode,
       };
 
-      handlePermissions(expectedPermissions, function (resource, scope) {
+      handlePermissions(expectedPermissions, (resource: string, scope: string) => {
         if (!authzRequest.permissions) {
           authzRequest.permissions = [];
         }
@@ -96,7 +104,7 @@ export class Enforcer {
       });
 
       if (request.kauth && request.kauth.grant) {
-        if (handlePermissions(expectedPermissions, function (resource, scope) {
+        if (handlePermissions(expectedPermissions, (resource: string, scope: string) => {
           if (!request.kauth.grant.access_token.hasPermission(resource, scope)) {
             return false;
           }
@@ -115,8 +123,9 @@ export class Enforcer {
       }
 
       if (config.response_mode === 'permissions') {
-        return keycloak.checkPermissions(authzRequest, request, response, function (permissions: ResponsePermission[]) {
-          if (handlePermissions(expectedPermissions, function (resource: string, scope: string) {
+        return keycloak.checkPermissions(authzRequest, request, response, (permissions: ResponsePermission[]) => {
+          this.logger.info('enforce:: checkPermission response: ', permissions);
+          if (handlePermissions(expectedPermissions, (resource: string, scope: string) => {
             if (!permissions || permissions.length === 0) {
               return false;
             }
@@ -142,13 +151,14 @@ export class Enforcer {
           }
 
           return keycloak.accessDenied(request, response, next);
-        }).catch(function () {
+        }).catch((error) => {
+          this.logger.error('enforce:: pers checkPermission:: error ', error.message, error);
           return keycloak.accessDenied(request, response, next);
         });
       } else if (config.response_mode === 'token') {
         authzRequest.response_mode = undefined;
-        return keycloak.checkPermissions(authzRequest, request, response).then(function (grant: Grant) {
-          if (handlePermissions(expectedPermissions, function (resource: string, scope: string) {
+        return keycloak.checkPermissions(authzRequest, request, response).then((grant: Grant) => {
+          if (handlePermissions(expectedPermissions, (resource: string, scope: string) => {
             if (!grant.access_token.hasPermission(resource, scope)) {
               return false;
             }
@@ -157,7 +167,8 @@ export class Enforcer {
           }
 
           return keycloak.accessDenied(request, response, next);
-        }).catch(function () {
+        }).catch((error) => {
+          this.logger.error('enforce:: token checkPermission:: error ', error.message, error);
           return keycloak.accessDenied(request, response, next);
         });
       }

@@ -18,7 +18,7 @@ export class SessionStore implements IStore {
     // const self = this;
     this.store.get(sessionId, (err, session) => {
       if (err) {
-        console.log(err);
+        console.error(err);
       }
       if (session) {
         delete session[TOKEN_KEY];

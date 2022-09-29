@@ -12,16 +12,19 @@ import { Grant } from '@Lib/Grant';
 import { Middlewares } from '@Lib/Middlewares';
 import { Enforcer } from '@Lib/Enforcer';
 import { AlohomoraRequest } from '@Lib/AlohomoraRequest';
+import { ILogger, ILoggerFactory } from '@Lib/logger/ILoggerFactory';
 
 export interface AlohomoraConfig {
   realm: string;
-
+  'auth-server-url': string;
+  'bearer-only': boolean;
 }
 export interface AlohomoraOptions {
   scope?: string
   store?: any
   cookies?: boolean
   accessDenied?: (request: AlohomoraRequest, response: Response) => void
+  LoggerFactory?: ILoggerFactory;
 }
 
 export class Alohomora {
@@ -29,11 +32,20 @@ export class Alohomora {
   grantManager: GrantManager;
   stores: IStore[];
   accessDenied: (request: Request, response: Response, next?: NextFunction) => void;
+  logger: ILogger;
+  LoggerFactory?: ILoggerFactory;
   constructor(options: AlohomoraOptions, alohomoraConfig?: AlohomoraConfig) {
     // If keycloakConfig is null, Config() will search for `keycloak.json`.
     this.config = new Config(alohomoraConfig);
 
     this.grantManager = new GrantManager(this.config);
+
+    if (options?.LoggerFactory) {
+      this.LoggerFactory = options.LoggerFactory;
+      this.logger = options.LoggerFactory.create(module);
+    } else {
+      this.logger = console;
+    }
 
     if (options && options.store && options.cookies) {
       throw new Error('Either `store` or `cookies` may be set, but not both');
@@ -115,6 +127,7 @@ export class Alohomora {
     callback?: Function) {
     return this.grantManager.obtainPermissions(authzRequest, request, callback)
       .then((grant) => {
+        this.logger.info('checkPermissions:: response data ', grant);
         if (!authzRequest.response_mode) {
           this.storeGrant(grant, request, response);
         }
