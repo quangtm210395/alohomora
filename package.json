@@ -10,7 +10,7 @@
     "clean": "rm -rf dist",
     "eslint": "eslint --ext .js,.jsx,.ts,.tsx ./",
     "eslint-fix": "eslint --fix --ext .js,.jsx,.ts,.tsx ./",
-    "clean-build": "npm run clean && npm run build && cp -r src/google dist"
+    "clean-build": "npm run clean && npm run build"
   },
   "devDependencies": {
     "@types/express": "^4.17.14",
