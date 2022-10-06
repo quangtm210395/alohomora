@@ -70,9 +70,11 @@ export class Enforcer {
         if (keycloak.getConfig().jsonEnforcerEnabled) {
           const policyEnforcer = keycloak.getConfig().policyEnforcer;
           if (policyEnforcer.paths && policyEnforcer.paths.length > 0) {
-            const path = policyEnforcer.paths.find(p => p.path === request.route.path);
+            const path = policyEnforcer.paths.find((p: any) => p.path === request.route.path);
             if (path) {
-              const method = path.methods.find(method => method.method.toLowerCase() === request.method.toLowerCase());
+              const method = path.methods.find((m: {
+                method: string, scopes: string[] | string
+              }) => m.method.toLowerCase() === request.method.toLowerCase());
               if (method) {
                 expectedPermissions.push(...method.scopes);
               }

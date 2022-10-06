@@ -11,6 +11,7 @@
     "alohomora",
     "jwks",
     "nodeify",
-    "unstore"
+    "unstore",
+    "kauth"
   ]
 }

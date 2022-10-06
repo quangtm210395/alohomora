@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 
 import { Token } from '@Lib/Token';
-import { IStore } from '@Lib/stores/IStore';
 
 export interface GrantProperties {
   access_token?: Token;
@@ -59,9 +58,9 @@ export class Grant {
    * An expired grant *may* be possible to refresh, if a valid
    * `refresh_token` is available.
    *
-   * @return {boolean} `true` if expired, otherwise `false`.
+   * @return `true` if expired, otherwise `false`.
    */
-  isExpired() {
+  isExpired(): boolean {
     if (!this.access_token) {
       return true;
     }

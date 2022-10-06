@@ -16,8 +16,11 @@ import { ILogger, ILoggerFactory } from '@Lib/logger/ILoggerFactory';
 
 export interface AlohomoraConfig {
   realm: string;
-  'auth-server-url': string;
-  'bearer-only': boolean;
+  authServerUrl: string;
+  bearerOnly: boolean;
+  jsonEnforcerEnabled: boolean;
+  clientId: string;
+  secret: string;
 }
 export interface AlohomoraOptions {
   scope?: string
