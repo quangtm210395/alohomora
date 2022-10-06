@@ -1,8 +1,8 @@
 # Alohomora
 
 [![Version](https://img.shields.io/npm/v/@hikariq/alohomora.svg)](https://www.npmjs.com/package/@hikariq/alohomora)
-[![License](https://img.shields.io/npm/l/@hikariq/alohomora.svg)](https://github.com/quangtm210395/alohomora/blob/master/LICENSE)
-[![Build Status](https://github.com/quangtm210395/alohomora/workflows/NPM%20publish/badge.svg?branch=master)](https://github.com/quangtm210395/alohomora/actions)
+[![License](https://img.shields.io/npm/l/@hikariq/alohomora.svg)](https://github.com/quangtm210395/alohomora/blob/main/LICENSE)
+[![Build Status](https://github.com/quangtm210395/alohomora/workflows/NPM%20publish/badge.svg?branch=main)](https://github.com/quangtm210395/alohomora/actions)
 
 This repository is to create middleware for nodejs service (express) to connect with [Keycloak](https://github.com/keycloak/keycloak) Authorization service.
 The idea is come from [keycloak-nodejs-connect](https://github.com/keycloak/keycloak-nodejs-connect), we extends the existing features of this project but currently only support the bearer-only option. We have added a fantastic feature is **policy enforcer by json configuration**. You can add the **policy-enforcer** attribute to the *keycloak.json* file and see the magic happen.
