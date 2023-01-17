@@ -20,7 +20,7 @@ export class Middlewares {
         })
         .then(next)
         .catch(() => {
-          keycloak.logger.warn('Middleware.grantAttacher:: No grant found! Unauthorized request!');
+          keycloak.logger.warn('Middleware.grantAttacher:: Invalid grant! Unauthorized request!');
           return keycloak.unauthorized(request, response, next);
         });
     };

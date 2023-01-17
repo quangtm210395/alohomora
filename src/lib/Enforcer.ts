@@ -90,6 +90,7 @@ export class Enforcer {
           }
         }
         if (auth === false) {
+          this.logger.info('enforcer:: ignoring authentication for this path: ', request.route.path);
           return next();
         }
       }
