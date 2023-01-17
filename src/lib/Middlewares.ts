@@ -14,10 +14,15 @@ export class Middlewares {
     return (request: AlohomoraRequest, response: Response, next: NextFunction) => {
       keycloak.getGrant(request, response)
         .then((grant: Grant) => {
-          request.kauth.grant = grant;
+          if (grant) {
+            request.kauth.grant = grant;
+          }
         })
         .then(next)
-        .catch(() => next());
+        .catch(() => {
+          keycloak.logger.warn('Middleware.grantAttacher:: No grant found! Unauthorized request!');
+          return keycloak.unauthorized(request, response, next);
+        });
     };
   }
 }

@@ -27,6 +27,7 @@ export interface AlohomoraOptions {
   store?: any
   cookies?: boolean
   accessDenied?: (request: AlohomoraRequest, response: Response) => void
+  unauthorized?: (request: AlohomoraRequest, response: Response) => void
   LoggerFactory?: ILoggerFactory;
 }
 
@@ -35,6 +36,7 @@ export class Alohomora {
   grantManager: GrantManager;
   stores: IStore[];
   accessDenied: (request: Request, response: Response, next?: NextFunction) => void;
+  unauthorized: (request: Request, response: Response, next?: NextFunction) => void;
   logger: ILogger;
   LoggerFactory?: ILoggerFactory;
   constructor(options: AlohomoraOptions, alohomoraConfig?: AlohomoraConfig) {
@@ -67,6 +69,14 @@ export class Alohomora {
     } else {
       this.accessDenied = (request: Request, response: Response) => {
         response.status(403).send('Access Denied');
+      };
+    }
+
+    if (options.unauthorized) {
+      this.unauthorized = options.unauthorized;
+    } else {
+      this.unauthorized = (request: Request, response: Response) => {
+        response.status(401).send('Unauthorized');
       };
     }
   }
@@ -106,8 +116,8 @@ export class Alohomora {
         })
         .catch(() => { return Promise.reject(new Error('Could not store grant code error')); });
     }
-
-    return Promise.reject(new Error('Could not obtain grant code error'));
+    return Promise.resolve(null);
+    // return Promise.reject(new Error('Could not obtain grant code error'));
   }
 
   storeGrant (grant: Grant, request: Request, response: Response) {
@@ -117,7 +127,7 @@ export class Alohomora {
       return;
     }
     if (!grant) {
-      this.accessDenied(request, response);
+      this.unauthorized(request, response);
       return;
     }
 

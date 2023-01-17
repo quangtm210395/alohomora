@@ -163,6 +163,9 @@ export class Enforcer {
           return keycloak.accessDenied(request, response, next);
         }).catch((error) => {
           this.logger.error('enforce:: pers checkPermission:: error ', error.message, error);
+          if (error.message === 'No bearer in header') {
+            return keycloak.unauthorized(request, response, next);
+          }
           return keycloak.accessDenied(request, response, next);
         });
       } else if (config.response_mode === 'token') {
@@ -179,6 +182,9 @@ export class Enforcer {
           return keycloak.accessDenied(request, response, next);
         }).catch((error) => {
           this.logger.error('enforce:: token checkPermission:: error ', error.message, error);
+          if (error.message === 'No bearer in header') {
+            return keycloak.unauthorized(request, response, next);
+          }
           return keycloak.accessDenied(request, response, next);
         });
       }
