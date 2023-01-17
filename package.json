@@ -1,6 +1,6 @@
 {
   "name": "@hikariq/alohomora",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "The middleware for nodejs to access keycloak authz service",
   "main": "dist/index",
   "author": "quangtm210395",
