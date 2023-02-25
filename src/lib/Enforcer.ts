@@ -72,18 +72,37 @@ export class Enforcer {
         if (keycloak.getConfig().jsonEnforcerEnabled) {
           const policyEnforcer = keycloak.getConfig().policyEnforcer;
           if (policyEnforcer.paths && policyEnforcer.paths.length > 0) {
-            const path = policyEnforcer.paths.find((p: any) => p.path === request.route.path);
+            const path = policyEnforcer.paths.find((p: any) => (request.route.path as string).startsWith(p.path));
             if (path) {
-              if (path.auth === false) {
-                auth = false;
-              }
-              const method = path.methods.find((m: {
-                method: string, scopes: string[] | string
-              }) => m.method.toLowerCase() === request.method.toLowerCase());
-              if (method) {
-                expectedPermissions.push(...method.scopes);
-                if (method.auth === false) {
+              if (path.path === request.route.path) {
+                if (path.auth === false) {
                   auth = false;
+                }
+                const method = path.methods.find((m: {
+                  method: string, scopes: string[] | string
+                }) => m.method.toLowerCase() === request.method.toLowerCase());
+                if (method) {
+                  expectedPermissions.push(...method.scopes);
+                  if (method.auth === false) {
+                    auth = false;
+                  }
+                }
+              } else {
+                const subPath = path.subPaths
+                  .find((subPath: any) => `${path.path}${subPath.path}` === request.route.path);
+                if (subPath) {
+                  if (subPath.auth === false) {
+                    auth = false;
+                  }
+                  const method = subPath.methods.find((m: {
+                    method: string, scopes: string[] | string
+                  }) => m.method.toLowerCase() === request.method.toLowerCase());
+                  if (method) {
+                    expectedPermissions.push(...method.scopes);
+                    if (method.auth === false) {
+                      auth = false;
+                    }
+                  }
                 }
               }
             }
