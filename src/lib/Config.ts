@@ -123,15 +123,15 @@ export class Config {
    * @param {Object} config The configuration to instill.
    */
   configure(config: any) {
-  /**
-   * Tries to resolve environment variables in the given value in case it is of type "string", else the given value is returned.
-   * Environment variable references look like: '${env.MY_ENVIRONMENT_VARIABLE}', optionally one can configure a fallback
-   * if the referenced env variable is not present. E.g. '${env.NOT_SET:http://localhost:8080}' yields 'http://localhost:8080'.
-   *
-   * @param value
-   * @returns {*}
-   */
-    function resolveValue (value) {
+    /**
+     * Tries to resolve environment variables in the given value in case it is of type "string", else the given value is returned.
+     * Environment variable references look like: '${env.MY_ENVIRONMENT_VARIABLE}', optionally one can configure a fallback
+     * if the referenced env variable is not present. E.g. '${env.NOT_SET:http://localhost:8080}' yields 'http://localhost:8080'.
+     *
+     * @param value
+     * @returns {*}
+     */
+    function resolveValue (value: any): any {
       if (typeof value !== 'string') {
         return value;
       }

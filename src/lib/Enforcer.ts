@@ -66,7 +66,6 @@ export class Enforcer {
 
     return (request: AlohomoraRequest, response: Response, next: NextFunction) => {
       let auth = true;
-      // let authz = false;
       if (!expectedPermissions || expectedPermissions.length === 0) {
         expectedPermissions = [];
         if (keycloak.getConfig().jsonEnforcerEnabled) {
@@ -78,7 +77,7 @@ export class Enforcer {
                 if (path.auth === false) {
                   auth = false;
                 }
-                const method = path.methods.find((m: {
+                const method = (path.methods || []).find((m: {
                   method: string, scopes: string[] | string
                 }) => m.method.toLowerCase() === request.method.toLowerCase());
                 if (method) {
@@ -87,8 +86,8 @@ export class Enforcer {
                     auth = false;
                   }
                 }
-              } else {
-                const subPath = path.subPaths
+              } else if (path.subPaths && path.subPaths.length > 0) {
+                const subPath = (path.subPaths || [])
                   .find((subPath: any) => `${path.path}${subPath.path}` === request.route.path);
                 if (subPath) {
                   if (subPath.auth === false) {
